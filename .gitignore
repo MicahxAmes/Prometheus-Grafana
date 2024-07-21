@@ -34,4 +34,4 @@ override.tf.json
 terraform.rc
 
 # Ignore CLI configuration files
-Prometheus-Grafana/MyKeyPair.pem
+MyKeyPair.pem
