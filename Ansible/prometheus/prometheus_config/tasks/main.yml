@@ -1,0 +1,28 @@
+---
+# tasks file for prometheus_config
+- name: Install Prometheus
+  yum:
+    name: prometheus
+    state: present
+
+- name: Configure Prometheus to Scrape Kubernetes Metrics
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+  notify: restart prometheus
+
+- name: Ensure Prometheus is running
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: Configure Prometheus alert rules
+  template:
+    src: alert_rules.yml.j2
+    dest: /etc/prometheus/alert_rules.yml
+
+- name: Reload Prometheus
+  service:
+    name: prometheus
+    state: reloaded

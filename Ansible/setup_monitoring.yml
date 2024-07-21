@@ -1,0 +1,4 @@
+- hosts: ec2_instances
+  roles:
+    - prometheus_config
+    - grafana_config

@@ -1,0 +1,3 @@
+---
+# vars file for prometheus_config
+prometheus_url: "http://localhost:9090"

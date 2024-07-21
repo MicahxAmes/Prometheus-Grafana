@@ -1,0 +1,42 @@
+---
+# tasks file for grafana_config
+- name: Install Grafana
+  yum:
+    name: grafana
+    state: present
+
+- name: Ensure Grafana is running
+  service:
+    name: grafana-server
+    state: started
+    enabled: yes
+
+- name: Configure Grafana datasources
+  template:
+    src: ../grafana/provisioning/datasources/datasources.yml.j2
+    dest: ../grafana/provisioning/datasources/datasources.yml
+
+- name: Configure Grafana dashboards
+  template:
+    src: ../grafana/provisioning/dashboards/dashboards.yml.j2
+    dest: ../grafana/provisioning/dashboards/dashboards.yml
+
+- name: Copy Grafana dashboard JSON file
+  copy:
+    src: "{{ playbook_dir }}/grafana/grafana_config/files/dashboards/dash.json"
+    dest: /var/lib/grafana/dashboards/dash.json
+
+- name: Copy Grafana dashboard JSON files to server
+  copy:
+    src: "{{ item }}"
+    dest: /var/lib/grafana/dashboards/
+    owner: grafana
+    group: grafana
+    mode: 0644
+  loop: "{{ lookup('fileglob', 'files/dashboards/*.json', wantlist=True) }}"
+  notify: restart grafana
+
+- name: Restart Grafana for changes to take effect
+  service:
+    name: grafana-server
+    state: restarted
